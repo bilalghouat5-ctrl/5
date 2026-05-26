@@ -1,0 +1,25 @@
+إصلاح روابط Vercel الفرعية:
+
+إذا ظهر الخطأ 404 عند فتح روابط مثل:
+/login
+/register
+/agency-register
+/car/...
+/agency/...
+/all/...
+
+فالسبب أن Vercel يحتاج إعادة توجيه كل الروابط الداخلية إلى index.html.
+تم إضافة هذا داخل vercel.json:
+
+"rewrites": [
+  { "source": "/(.*)", "destination": "/index.html" }
+]
+
+إعدادات Vercel:
+Framework Preset: Vite
+Install Command: npm install --registry=https://registry.npmjs.org/
+Build Command: npm run build
+Output Directory: dist
+
+مهم:
+بعد رفع هذه النسخة، اعمل Redeploy بدون استخدام الكاش أو احذف المشروع القديم وأنشئ مشروع جديد.
