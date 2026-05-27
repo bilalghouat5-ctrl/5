@@ -1,0 +1,68 @@
+إعداد Supabase للنسخة v6.7.19
+
+الجديد في هذه النسخة:
+1. تم حذف الحسابات التجريبية والوهمية من التطبيق الرئيسي.
+2. تسجيل الدخول والتسجيل في التطبيق الرئيسي أصبح عبر Supabase Auth فقط.
+3. أزرار Google و Apple لم تعد تعرض حسابات وهمية؛ هي تحول إلى OAuth الحقيقي عبر Supabase عند تفعيله.
+4. AgencyPortal لا يعتمد على VITE_AGENCY_ID؛ يوجد رابط واحد وكل صاحب وكالة يدخل باسم المستخدم وكلمة المرور.
+5. يتم تحديد الوكالة تلقائياً من جدول profiles حسب agency_id المرتبط بحساب صاحب الوكالة.
+6. AdminPanel يستطيع إنشاء حسابات فرعية بصلاحيات محددة.
+7. صاحب الوكالة يستطيع تغيير بياناته الشخصية وكلمة المرور واسم المستخدم، مع منع الاسم إن كان محجوزاً.
+8. ملف schema.sql لم يعد يضيف بيانات وكالات أو سيارات وهمية.
+
+قبل رفع الملفات إلى GitHub:
+- لا ترفع ملفات .env الحقيقية.
+- هذه النسخة تحتوي فقط على .env.example.
+- ضع مفاتيح Supabase داخل Vercel Environment Variables وليس داخل GitHub.
+
+متغيرات Vercel المطلوبة في كل مشروع:
+VITE_SUPABASE_URL
+VITE_SUPABASE_ANON_KEY
+
+ملاحظة مهمة:
+لم نعد نستخدم VITE_AGENCY_ID في AgencyPortal.
+
+خطوات Supabase:
+1. افتح Supabase SQL Editor.
+2. إذا كانت هذه أول مرة، نفّذ الملف:
+   supabase/schema.sql
+
+3. إذا كانت الجداول موجودة من نسخة سابقة، نفّذ الملفين بالترتيب:
+   supabase/migration_v6_7_16_auth_roles.sql
+   supabase/migration_v6_7_18_real_auth_cleanup.sql
+
+4. أنشئ أول حساب مدير من Supabase Authentication > Users.
+5. انسخ User ID للحساب.
+6. أضف profile للمدير في SQL Editor، مع استبدال القيم التالية ببياناتك الحقيقية:
+   AUTH_ADMIN_UUID
+   YOUR_ADMIN_EMAIL
+   YOUR_ADMIN_USERNAME
+
+insert into public.profiles (id,email,username,full_name,role,status,permissions)
+values ('AUTH_ADMIN_UUID','YOUR_ADMIN_EMAIL','YOUR_ADMIN_USERNAME','مدير المنصة','admin','active','{"agencies":true,"cars":true,"bookings":true,"messages":true,"users":true,"staff":true,"fees":true,"settings":true}'::jsonb)
+on conflict (id) do update set username=excluded.username, role=excluded.role, permissions=excluded.permissions;
+
+7. أنشئ وكالة حقيقية في جدول agencies أو من AdminPanel لاحقاً. يجب أن يكون لها id حقيقي مثل AGENCY_ID_REAL.
+
+8. أنشئ حساب صاحب وكالة من Supabase Authentication > Users.
+9. انسخ User ID واربطه بمعرف الوكالة الحقيقي:
+
+insert into public.profiles (id,email,username,full_name,role,agency_id,status)
+values ('AUTH_AGENCY_UUID','YOUR_AGENCY_EMAIL','YOUR_AGENCY_USERNAME','صاحب الوكالة','agency','AGENCY_ID_REAL','active')
+on conflict (id) do update set username=excluded.username, agency_id=excluded.agency_id, role=excluded.role;
+
+بعد ذلك:
+- دخول AdminPanel يكون باسم المستخدم الذي وضعته في YOUR_ADMIN_USERNAME وكلمة مرور حساب Authentication.
+- دخول AgencyPortal يكون باسم المستخدم الذي وضعته في YOUR_AGENCY_USERNAME وكلمة مرور حساب Authentication.
+- من AdminPanel يمكنك إنشاء حسابات فرعية بعد الدخول.
+
+تفعيل Google و Apple:
+- من Supabase Dashboard افتح Authentication > Providers.
+- فعّل Google أو Apple وضع Client ID / Secret من حساب المطور الخاص بك.
+- أضف رابط موقع التطبيق في Redirect URLs داخل Supabase.
+- قبل التفعيل، ستبقى أزرار Google و Apple موجودة لكن لن تعمل إلا بعد إعداد Provider في Supabase.
+
+بالنسبة للانتظار 24 ساعة:
+لا تحتاج أن تنتظر 24 ساعة لتجهيز Supabase أو رفع الملفات إلى GitHub.
+الانتظار فقط بسبب حد Vercel اليومي للنشر.
+يمكنك الآن رفع الملفات إلى GitHub، ثم بعد رجوع حد Vercel تقوم بالنشر وتضع Environment Variables في Vercel.
