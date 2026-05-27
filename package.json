@@ -1,0 +1,27 @@
+{
+  "name": "driverent",
+  "private": true,
+  "version": "6.7.13",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 0.0.0.0",
+    "build": "vite build",
+    "preview": "vite preview --host 0.0.0.0",
+    "dev:admin": "cd AdminPanel && vite --host 0.0.0.0",
+    "build:admin": "cd AdminPanel && vite build",
+    "preview:admin": "cd AdminPanel && vite preview --host 0.0.0.0",
+    "dev:agency": "cd AgencyPortal && vite --host 0.0.0.0",
+    "build:agency": "cd AgencyPortal && vite build",
+    "preview:agency": "cd AgencyPortal && vite preview --host 0.0.0.0",
+    "build:all": "npm run build && npm run build:admin && npm run build:agency"
+  },
+  "dependencies": {
+    "@vitejs/plugin-react": "4.2.0",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "vite": "5.0.0"
+  },
+  "engines": {
+    "node": "20.x"
+  }
+}
