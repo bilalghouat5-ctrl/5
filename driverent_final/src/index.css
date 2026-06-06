@@ -1,0 +1,35 @@
+@import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@355;400;500;700;800;900&family=Vazirmatn:wght@300;400;500;600;700;800&family=Cairo:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Tajawal", "Vazirmatn", "Cairo", system-ui, -apple-system, sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+}
+
+/* Custom styles for native feeling */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Input range styling */
+input[type="range"] {
+  accent-color: #6d28d9;
+}
+
+/* Native tap highlight preview */
+button, a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Direction configuration */
+html, body {
+  direction: rtl;
+  font-family: "Tajawal", "Vazirmatn", "Cairo", system-ui, sans-serif;
+  background-color: #f3f4f6;
+  user-select: none;
+  overflow-x: hidden;
+}
